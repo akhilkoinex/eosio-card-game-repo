@@ -48,21 +48,20 @@ class Login extends Component {
   }
 
   // Handle form submission to call api
-  handleSubmit(event) {
-    // Stop the default form submit browser behaviour
-    event.preventDefault();
-    // Extract `form` state
-    const { form } = this.state;
+  handleSubmit() {
     // Extract `setUser` of `UserAction` and `user.name` of UserReducer from redux
+    if (!window.eosWallet) {
+      alert('Please install EOS Pulse plugin to continue')
+    }
     const { setUser } = this.props;
     // Set loading spinner to the button
     this.setState({ isSigningIn: true });
     // Send a login transaction to the blockchain by calling the ApiService,
     // If it successes, save the username to redux store
     // Otherwise, save the error state for displaying the message
-    return ApiService.login(form)
-      .then(() => {
-        setUser({ name: form.username });
+    return ApiService.login()
+      .then((username) => {
+        setUser({ name: username });
       })
       .catch(err => {
         this.setState({ error: err.toString() });
@@ -77,44 +76,16 @@ class Login extends Component {
   render() {
     // Extract data from state
     const { form, error, isSigningIn } = this.state;
-
+    const { eosWallet } = window
     return (
       <div className="Login">
         <div className="title">Elemental Battles - powered by EOSIO</div>
-        <div className="description">Please use the Account Name and Private Key generated in the previous page to log into the game.</div>
-        <form name="form" onSubmit={ this.handleSubmit }>
-          <div className="field">
-            <label>Account name</label>
-            <input
-              type="text"
-              name="username"
-              value={ form.username }
-              placeholder="All small letters, a-z, 1-5 or dot, max 12 characters"
-              onChange={ this.handleChange }
-              pattern="[\.a-z1-5]{2,12}"
-              required
-            />
-          </div>
-          <div className="field">
-            <label>Private key</label>
-            <input
-              type="password"
-              name="key"
-              value={ form.key }
-              onChange={ this.handleChange }
-              pattern="^.{51,}$"
-              required
-            />
-          </div>
-          <div className="field form-error">
-            { error && <span className="error">{ error }</span> }
-          </div>
-          <div className="bottom">
-            <Button type="submit" className="green" loading={ isSigningIn }>
-              { "CONFIRM" }
-            </Button>
-          </div>
-        </form>
+        <div className="description">Login Using EOS Pulse</div>
+        <div className="bottom">
+          <Button type="submit" className="green" loading={ isSigningIn } onClick={() => this.handleSubmit()}>
+            { "CONFIRM" }
+          </Button>
+        </div>
       </div>
     )
   }
