@@ -8,8 +8,8 @@ async function takeAction(action, dataValue) {
   // Main call to blockchain after setting action, account_name and data
   try {
 
-    const eosWallet = window.eosWallet;
-    var resultWithConfig = await eosWallet.sendCustomAction(process.env.REACT_APP_EOS_CONTRACT_NAME, action, dataValue);
+    const pulse = window.pulse;
+    var resultWithConfig = await pulse.sendCustomAction(process.env.REACT_APP_EOS_CONTRACT_NAME, action, dataValue);
 
     // const resultWithConfig = await api.transact({
     //   actions: [{
@@ -54,8 +54,8 @@ class ApiService {
 
   static login() {
     return new Promise(async (resolve, reject) => {
-      const eosWallet = window.eosWallet;
-      var { data, status } = await eosWallet.connect();
+      const pulse = window.pulse;
+      var { data, status } = await pulse.connect();
       if (status == "success") {
         const username = data["account_name"];
         localStorage.setItem("cardgame_account", username);
